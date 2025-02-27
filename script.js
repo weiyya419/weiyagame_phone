@@ -13,8 +13,8 @@ context.scale(scale, scale);
 // 离屏 Canvas
 const offCanvas = document.createElement("canvas");
 const offContext = offCanvas.getContext("2d");
-offCanvas.width = canvas.width;
-offCanvas.height = canvas.height;
+offCanvas.width = 10;
+offCanvas.height = 20;
 
 // 游戏区域
 const ROWS = 20;
@@ -84,11 +84,10 @@ function createPiece() {
 
 // 绘制游戏区域
 function drawBoard() {
-    // 在离屏 Canvas 上绘制背景
+    // 在离屏 Canvas 上绘制
     offContext.fillStyle = COLORS[0];
     offContext.fillRect(0, 0, COLS, ROWS);
 
-    // 在离屏 Canvas 上绘制游戏区域
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             if (board[row][col] !== EMPTY) {
@@ -97,36 +96,37 @@ function drawBoard() {
             }
         }
     }
-}
-
-// 绘制当前方块
-function drawPiece() {
-    // 在离屏 Canvas 上绘制当前方块
-    currentPiece.shape.forEach((row, dy) => {
-        row.forEach((value, dx) => {
-            if (value) {
-                offContext.fillStyle = COLORS[currentPiece.color];
-                offContext.fillRect(currentPiece.x + dx, currentPiece.y + dy, 1, 1);
-            }
-        });
-    });
 
     // 将离屏 Canvas 绘制到主 Canvas 上
     context.drawImage(offCanvas, 0, 0);
 }
 
-// 绘制下落位置辅助线
-function drawGhostPiece() {
-    const ghostY = calculateGhostY();
-    offContext.strokeStyle = "#FFFFFF";
-    offContext.lineWidth = 0.1;
+// 绘制当前方块
+function drawPiece() {
     currentPiece.shape.forEach((row, dy) => {
         row.forEach((value, dx) => {
             if (value) {
-                offContext.strokeRect(currentPiece.x + dx, ghostY + dy, 1, 1);
+                context.fillStyle = COLORS[currentPiece.color];
+                context.fillRect(currentPiece.x + dx, currentPiece.y + dy, 1, 1);
             }
         });
     });
+}
+
+// 绘制下落位置辅助线
+function drawGhostPiece() {
+    const ghostY = calculateGhostY();
+    context.strokeStyle = "#FFFFFF";
+    context.lineWidth = 0.1;
+    context.beginPath();
+    currentPiece.shape.forEach((row, dy) => {
+        row.forEach((value, dx) => {
+            if (value) {
+                context.rect(currentPiece.x + dx, ghostY + dy, 1, 1);
+            }
+        });
+    });
+    context.stroke();
 }
 
 // 计算下落位置
@@ -305,6 +305,9 @@ function gameLoop(timestamp) {
     }
 }
 
+// 启动游戏
+init();
+requestAnimationFrame(gameLoop);
 // 启动游戏
 init();
 requestAnimationFrame(gameLoop);
