@@ -4,17 +4,24 @@ const nextCanvas = document.getElementById("next");
 const nextContext = nextCanvas.getContext("2d");
 const scoreDisplay = document.getElementById("score");
 
-// 画布缩放
-const scale = window.devicePixelRatio || 1;
-canvas.width = 300 * scale;
-canvas.height = 600 * scale;
-context.scale(scale, scale);
+// 设置 Canvas 的实际尺寸（像素）
+canvas.width = 300; // 宽度为 300 像素
+canvas.height = 600; // 高度为 600 像素
+
+// 设置 Canvas 的 CSS 尺寸（显示大小）
+canvas.style.width = "300px"; // 显示宽度为 300px
+canvas.style.height = "600px"; // 显示高度为 600px
+
+// 不需要额外的缩放
+context.scale(1, 1); // 缩放比例为 1
 
 // 离屏 Canvas
 const offCanvas = document.createElement("canvas");
 const offContext = offCanvas.getContext("2d");
-offCanvas.width = 10;
-offCanvas.height = 20;
+
+// 设置离屏 Canvas 的尺寸
+offCanvas.width = canvas.width; // 与主 Canvas 宽度一致
+offCanvas.height = canvas.height; // 与主 Canvas 高度一致
 
 // 游戏区域
 const ROWS = 20;
@@ -103,6 +110,7 @@ function drawBoard() {
 
 // 绘制当前方块
 function drawPiece() {
+    // 在主 Canvas 上绘制当前方块
     currentPiece.shape.forEach((row, dy) => {
         row.forEach((value, dx) => {
             if (value) {
@@ -305,9 +313,6 @@ function gameLoop(timestamp) {
     }
 }
 
-// 启动游戏
-init();
-requestAnimationFrame(gameLoop);
 // 启动游戏
 init();
 requestAnimationFrame(gameLoop);
